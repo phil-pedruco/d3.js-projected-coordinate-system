@@ -1,0 +1,2 @@
+This is a simple rendering of cadastre data (lots) from a projected coordinate system (one that's in units of (typically) meters).  The map has used a user defined coordinate system that transforms the projected coordinate system to screen pixels, which is a trivial exercise in this case and similar (well identical) to typical linear transform in d3.  However, lots of data is set to these coordinate systems and I find it convenient to use a 'coordinate system' transform together with d3 geo functionality.  
+

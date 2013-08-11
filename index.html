@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v2.min.js" charset="utf-8"></script>
+
+    <title>Cadastre</title>
+<style>
+
+.frame {
+  stroke: #000;
+  fill: none;
+  pointer-events: all;
+}
+.lot {
+  fill: lightgray;
+  stroke: dimgray;
+}
+
+</style>
+
+  <body>
+ 
+  <script>
+
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+  var svg = d3.select("body").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+   svg.append("rect")
+      .attr("class", "frame")
+      .attr("width", width)
+      .attr("height", height);
+
+  var g = svg.append("g");
+  var feature = g.selectAll(".feature");
+
+  d3.json("sample.json", function(collection) {
+
+    console.log(collection)
+     
+    var x_range = d3.extent(collection.features, function(d) { 
+                return +d.properties.Easting; });
+
+    var y_range = d3.extent(collection.features, function(d) { 
+                return +d.properties.Northing; });
+
+    var path = d3.geo.path()
+              .projection(mga);
+
+    feature = feature.data(collection.features)
+      .enter().append("path")
+        .attr("class", "lot")
+        .attr("d", path)
+        .on("click", function (d) { 
+          
+          highlight = d3.select(this);
+
+          highlight
+            .style("stroke", "red")
+            .style("stroke-width", "5px");
+
+          highlight.moveToFront();
+
+          })
+        .on("mouseout", function () { 
+          d3.select(this)
+            .style("stroke", "dimgray")
+            .style("stroke-width", "1px");
+          });
+    
+   function mga(coordinates) {
+  return [
+    (coordinates[0] - x_range[0]) * width/(x_range[1] - x_range[0]),
+    (coordinates[1] - y_range[0]) * height/(y_range[1] - y_range[0])
+    ];
+  };
+
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function () {
+      this.parentNode.appendChild(this);
+    });
+  };
+
+});
+
+</script>
